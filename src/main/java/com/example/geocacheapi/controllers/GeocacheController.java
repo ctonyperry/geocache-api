@@ -16,49 +16,44 @@ public class GeocacheController {
     @Autowired
 
     private GeocacheRepository geocacheRepository;
-    private Long aircraftId;
+    private Long geocacheId;
     private Geocache geocacheRequest;
     private LocationRequest locationRequest;
     private GeocacheResponse geocacheResponse;
-
-
 
     @GetMapping("/")
     public Iterable<Geocache> findAllAircraft() {
         return geocacheRepository.findAll();
     }
 
-    @GetMapping("/{aircraftId}")
-    public Geocache findAircraftById(@PathVariable Long aircraftId) {
-        return geocacheRepository.findOne(aircraftId);
+    @GetMapping("/{geocacheId}")
+    public Geocache findAircraftById(@PathVariable Long geocacheId) {
+        return geocacheRepository.findOne(geocacheId);
     }
 
-
-//    @PostMapping("/searchradius")
-//    public Iterable<Geocache> findGeocacheByLocatiobn(@RequestBody LocationRequest locationRequest) {
-//        double radius = locationRequest.getRadius() * 0.01818181818;
-//        return geocacheRepository.findByLocation(locationRequest.getLatitude(), locationRequest.getLongitude(), radius);
-//    }
-
-    @PostMapping("/getcaches")
-    public GeocacheResponse findGeocacheByLocatiobnWithMetaData(@RequestBody LocationRequest locationRequest) {
+    @PostMapping("/caches/getByRadius")
+    public Iterable<Geocache> findGeocacheByRadius(@RequestBody LocationRequest locationRequest) {
         double radius = locationRequest.getRadius() * 0.01818181818;
 
-        geocacheResponse = new GeocacheResponse();
         Iterable<Geocache> geoCaches = geocacheRepository.findByLocation(locationRequest.getLatitude(), locationRequest.getLongitude(), radius);
-        geocacheResponse.setGeocaches(geoCaches);
-
-        geocacheResponse.setMessage("Success");
-
-        //This is a reaaaally stupid way to do this, fix it later.
-        geocacheResponse.setNumRecords(Lists.newArrayList(geoCaches).size());
-
-        return geocacheResponse;
+        return geoCaches;
     }
 
+    @PostMapping("/caches/getByBoundingBox")
+    public Iterable<Geocache> findGeoCachesInBoundingBox(@RequestBody LocationRequest locationRequest) {
+        double radius = locationRequest.getRadius() * 0.01818181818;
+        Iterable<Geocache> geoCaches = geocacheRepository.findByBoundingBox(locationRequest.getMinLatitude(),
+                locationRequest.getMaxLatitude(),
+                locationRequest.getMinLongitude(),
+                locationRequest.getMaxLongitude());
 
 
+        return geoCaches;
+    }
 
-
+    @GetMapping("/caches/deleteCache/{geocacheId}")
+    public void deleteCache(@PathVariable Long geocacheId){
+        geocacheRepository.delete(geocacheId);
+    }
 
 }

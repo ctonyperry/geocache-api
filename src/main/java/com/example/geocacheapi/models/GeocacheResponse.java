@@ -3,7 +3,7 @@ package com.example.geocacheapi.models;
 public class GeocacheResponse {
     private int numRecords;
     private String message;
-    
+
     private Iterable<Geocache> geocaches;
 
     public String getMessage() {
@@ -13,9 +13,6 @@ public class GeocacheResponse {
     public void setMessage(String message) {
         this.message = message;
     }
-
-
-
 
     public Iterable<Geocache> getGeocaches() {
         return geocaches;
